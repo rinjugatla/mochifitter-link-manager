@@ -68,6 +68,7 @@
             CreateLink_Button.TabIndex = 2;
             CreateLink_Button.Text = "BlenderToolsをおまとめ";
             CreateLink_Button.UseVisualStyleBackColor = true;
+            CreateLink_Button.Click += CreateLink_Button_Click;
             // 
             // Form1
             // 
