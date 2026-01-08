@@ -254,37 +254,16 @@ namespace mochifitter_link_manager
             }
         }
 
-        private void CreateSymbolicLink(string from, string to)
+        private void CreateSymbolicLink(string targetPath, string linkPath)
         {
-            var processInfo = new ProcessStartInfo
+            try
             {
-                FileName = "cmd.exe",
-                Arguments = $"/c mklink /D \"{from}\" \"{to}\"",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                Verb = "runas" // 管理者権限で実行
-            };
-
-            if (processInfo == null)
-            {
-                throw new InvalidOperationException("プロセス情報の作成に失敗しました。");
+                Directory.CreateSymbolicLink(linkPath, targetPath);
             }
-
-            using (var process = Process.Start(processInfo))
+            catch (Exception ex)
             {
-                if (process == null)
-                {
-                    throw new InvalidOperationException("プロセスの開始に失敗しました。");
-                }
-
-                process.WaitForExit();
-                if (process.ExitCode != 0)
-                {
-                    var error = process.StandardError.ReadToEnd();
-                    throw new InvalidOperationException("シンボリックリンクの作成に失敗しました: " + error);
-                }
+                // 既存のエラーハンドリングと同様にラップして上位に伝搬
+                throw new InvalidOperationException("シンボリックリンクの作成に失敗しました: " + ex.Message, ex);
             }
         }
     }
