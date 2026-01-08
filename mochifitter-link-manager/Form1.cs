@@ -17,6 +17,9 @@ namespace mochifitter_link_manager
             UpdateCreateLinkButtonState();
         }
 
+        /// <summary>
+        /// BlenderToolsフォルダ参照ボタンのクリック処理
+        /// </summary>
         private void BrowseVrcRootDirectory_Button_Click(object? sender, EventArgs e)
         {
             try
@@ -48,16 +51,26 @@ namespace mochifitter_link_manager
             }
         }
 
+        /// <summary>
+        /// フォルダパス変更時の処理
+        /// </summary>
         private void BlenderToolsDirectory_TextBox_TextChanged(object? sender, EventArgs e)
         {
             UpdateCreateLinkButtonState();
         }
 
+        /// <summary>
+        /// まとめボタンの状態更新
+        /// </summary>
         private void UpdateCreateLinkButtonState()
         {
             CreateLink_Button.Enabled = ValidateBlenderToolsDirectory(BlenderToolsDirectory_TextBox.Text);
         }
 
+        /// <summary>
+        /// BlenderToolsフォルダパスを検証
+        /// </summary>
+        /// <param name="path">BlenderToolsフォルダパス</param>
         private bool ValidateBlenderToolsDirectory(string path)
         {
             if (string.IsNullOrWhiteSpace(path)) { return false; }
@@ -76,6 +89,9 @@ namespace mochifitter_link_manager
             }
         }
 
+        /// <summary>
+        /// BlenderToolsフォルダをVRCRoot直下に移動し、不要なBlenderToolsフォルダを削除し、シンボリックリンクを作成
+        /// </summary>
         private async void CreateLink_Button_Click(object sender, EventArgs e)
         {
             bool isValidBlenderToolsDir = ValidateBlenderToolsDirectory(BlenderToolsDirectory_TextBox.Text);
@@ -189,7 +205,11 @@ namespace mochifitter_link_manager
             return targetFull;
         }
 
-        // Non-UI core for background execution with progress between [startPercent, endPercent)
+        /// <summary>
+        /// 不要なBlenderToolsフォルダを削除
+        /// </summary>
+        /// <param name="vrcRootDirPath">VRChatプロジェクト群のルートフォルダ</param>
+        /// <exception cref="DirectoryNotFoundException">ルートフォルダが存在しない</exception>
         private (int deletedCount, int failedCount) DeleteOthersBlenderToolsCore(string vrcRootDirPath, IProgress<(string message, int percent)> progress, int startPercent, int endPercent)
         {
             if (string.IsNullOrWhiteSpace(vrcRootDirPath))
@@ -232,10 +252,16 @@ namespace mochifitter_link_manager
 
             return (deletedCount, failedCount);
         }
-        
+
+        /// <summary>
+        /// ディレクトリとファイルの属性を再帰的に通常に戻す
+        /// </summary>
+        /// <remarks>
+        /// 削除時に属性が読み取り専用だと失敗する場合がある
+        /// </remarks>
+        /// <param name="dir"></param>
         private void ClearReadOnlyAttributes(DirectoryInfo dir)
         {
-            // ディレクトリとファイルの属性を再帰的に通常に戻す
             try
             {
                 foreach (var subDir in dir.GetDirectories("*", SearchOption.AllDirectories))
@@ -256,8 +282,12 @@ namespace mochifitter_link_manager
             }
         }
 
-
-        // Non-UI core for background execution with progress between [startPercent, endPercent]
+        /// <summary>
+        /// シンボリックリンクを作成
+        /// </summary>
+        /// <param name="vrcRootDirPath">VRChatプロジェクト群のルートフォルダ</param>
+        /// <param name="blenderToolsDirPath">BlenderToolsの実体フォルダパス</param>
+        /// <exception cref="DirectoryNotFoundException">ルートフォルダが存在しない</exception>
         private int CreateSymbolicLinksCore(string vrcRootDirPath, string blenderToolsDirPath, IProgress<(string message, int percent)> progress, int startPercent, int endPercent)
         {
             if (string.IsNullOrWhiteSpace(vrcRootDirPath))
@@ -295,6 +325,12 @@ namespace mochifitter_link_manager
             return created;
         }
 
+        /// <summary>
+        /// シンボリックリンクを作成
+        /// </summary>
+        /// <param name="linkPath">リンク</param>
+        /// <param name="targetPath">実体</param>
+        /// <exception cref="InvalidOperationException"></exception>
         private void CreateSymbolicLink(string linkPath, string targetPath)
         {
             try
