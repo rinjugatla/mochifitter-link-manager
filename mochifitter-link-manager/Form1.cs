@@ -66,7 +66,8 @@ namespace mochifitter_link_manager
                 var dirInfo = new DirectoryInfo(path);
                 var folderName = dirInfo.Name;
                 return string.Equals(folderName, "BlenderTools", StringComparison.OrdinalIgnoreCase)
-                       && Directory.Exists(path);
+                       && Directory.Exists(path) 
+                       && (dirInfo.Attributes & FileAttributes.ReparsePoint) != FileAttributes.ReparsePoint;
             }
             catch
             {
@@ -273,6 +274,11 @@ namespace mochifitter_link_manager
 
             using (var process = Process.Start(processInfo))
             {
+                if (process == null)
+                {
+                    throw new InvalidOperationException("プロセスの開始に失敗しました。");
+                }
+
                 process.WaitForExit();
                 if (process.ExitCode != 0)
                 {
