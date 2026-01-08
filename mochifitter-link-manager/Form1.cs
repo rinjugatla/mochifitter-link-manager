@@ -3,6 +3,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.DirectoryServices.ActiveDirectory;
+using System.Threading.Tasks;
 
 namespace mochifitter_link_manager
 {
@@ -75,7 +76,7 @@ namespace mochifitter_link_manager
             }
         }
 
-        private void CreateLink_Button_Click(object sender, EventArgs e)
+        private async void CreateLink_Button_Click(object sender, EventArgs e)
         {
             bool isValidBlenderToolsDir = ValidateBlenderToolsDirectory(BlenderToolsDirectory_TextBox.Text);
             if (!isValidBlenderToolsDir)
@@ -93,108 +94,133 @@ namespace mochifitter_link_manager
                 return;
             }
 
-            MoveBlenderToolsToRoot(BlenderToolsDirectory_TextBox.Text, vrcRootDir.FullName);
-            DeleteOthersBlenderTools(vrcRootDir.FullName);
-            CreateSymbolicLinks(vrcRootDir.FullName, BlenderToolsDirectory_TextBox.Text);
+            using (var progressDialog = new ProgressDialog())
+            {
+                progressDialog.Show(this);
+                progressDialog.UpdateStatus("準備中...", 0);
+
+                var blenderToolsPath = BlenderToolsDirectory_TextBox.Text;
+                var rootPath = vrcRootDir.FullName;
+
+                int deletedCount = 0;
+                int failedDeleteCount = 0;
+                int linkCreatedCount = 0;
+
+                var progress = new Progress<(string message, int percent)>(update =>
+                {
+                    progressDialog.UpdateStatus(update.message, update.percent);
+                });
+
+                try
+                {
+                    await Task.Run(() =>
+                    {
+                        // 0-10% Move
+                        ReportProgress(progress, "BlenderTools を VRCRoot へ移動しています...", 5);
+                        MoveBlenderToolsToRootCore(blenderToolsPath, rootPath);
+                        ReportProgress(progress, "移動完了", 10);
+
+                        // 10-70% Delete others
+                        (deletedCount, failedDeleteCount) = DeleteOthersBlenderToolsCore(rootPath, progress, 10, 70);
+
+                        // 70-100% Create links
+                        linkCreatedCount = CreateSymbolicLinksCore(rootPath, blenderToolsPath, progress, 70, 100);
+                        ReportProgress(progress, "リンク作成完了", 100);
+                    });
+
+                    string summary = $"削除成功: {deletedCount} 件\n失敗: {failedDeleteCount} 件\n作成したリンク: {linkCreatedCount} 件";
+                    MessageBox.Show(this, summary, "処理完了", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(this, "処理中にエラーが発生しました: " + ex.Message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    progressDialog.Close();
+                }
+            }
         }
 
-        private void MoveBlenderToolsToRoot(string blenderToolsDirPath, string vrcRootDirPath)
+        private static void ReportProgress(IProgress<(string message, int percent)> progress, string message, int percent)
         {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(blenderToolsDirPath) || string.IsNullOrWhiteSpace(vrcRootDirPath))
-                {
-                    MessageBox.Show(this, "パスが無効です。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                var sourceDir = new DirectoryInfo(blenderToolsDirPath);
-                if (!sourceDir.Exists)
-                {
-                    MessageBox.Show(this, "指定されたBlenderToolsフォルダが見つかりません。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                var targetPath = Path.Combine(vrcRootDirPath, "BlenderTools");
-
-                var sourceFull = Path.GetFullPath(sourceDir.FullName).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-                var targetFull = Path.GetFullPath(targetPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-
-                if (string.Equals(sourceFull, targetFull, StringComparison.OrdinalIgnoreCase))
-                {
-                    MessageBox.Show(this, "BlenderToolsは既にVRCRootにあります。", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
-
-                if (Directory.Exists(targetFull) || File.Exists(targetFull))
-                {
-                    MessageBox.Show(this, "VRCRootに既にBlenderToolsが存在します。操作を中止します。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                // Move the directory to VRCRoot
-                Directory.Move(sourceFull, targetFull);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(this, "移動中にエラーが発生しました: " + ex.Message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            progress?.Report((message, Math.Max(0, Math.Min(100, percent))));
         }
 
-        private void DeleteOthersBlenderTools(string vrcRootDirPath)
+        // Non-UI core for background execution
+        private void MoveBlenderToolsToRootCore(string blenderToolsDirPath, string vrcRootDirPath)
+        {
+            if (string.IsNullOrWhiteSpace(blenderToolsDirPath) || string.IsNullOrWhiteSpace(vrcRootDirPath))
+            {
+                throw new ArgumentException("パスが無効です。");
+            }
+
+            var sourceDir = new DirectoryInfo(blenderToolsDirPath);
+            if (!sourceDir.Exists)
+            {
+                throw new DirectoryNotFoundException("指定されたBlenderToolsフォルダが見つかりません。");
+            }
+
+            var targetPath = Path.Combine(vrcRootDirPath, "BlenderTools");
+
+            var sourceFull = Path.GetFullPath(sourceDir.FullName).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            var targetFull = Path.GetFullPath(targetPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+            if (string.Equals(sourceFull, targetFull, StringComparison.OrdinalIgnoreCase))
+            {
+                return; // already in place
+            }
+
+            if (Directory.Exists(targetFull) || File.Exists(targetFull))
+            {
+                throw new IOException("VRCRootに既にBlenderToolsが存在します。操作を中止します。");
+            }
+
+            Directory.Move(sourceFull, targetFull);
+        }
+
+        // Non-UI core for background execution with progress between [startPercent, endPercent)
+        private (int deletedCount, int failedCount) DeleteOthersBlenderToolsCore(string vrcRootDirPath, IProgress<(string message, int percent)> progress, int startPercent, int endPercent)
         {
             if (string.IsNullOrWhiteSpace(vrcRootDirPath))
             {
-                return;
+                return (0, 0);
             }
 
-            try
+            var rootDir = new DirectoryInfo(vrcRootDirPath);
+            if (!rootDir.Exists)
             {
-                var rootDir = new DirectoryInfo(vrcRootDirPath);
-                if (!rootDir.Exists)
-                {
-                    MessageBox.Show(this, "指定されたルートフォルダが存在しません。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
+                throw new DirectoryNotFoundException("指定されたルートフォルダが存在しません。");
+            }
 
-                int deletedCount = 0;
-                int failedCount = 0;
+            int deletedCount = 0;
+            int failedCount = 0;
 
-                // 探索は1階層分のみ（rootDir の直下のフォルダ）
-                foreach (var child in rootDir.GetDirectories())
+            var children = rootDir.GetDirectories();
+            int total = Math.Max(1, children.Length);
+            for (int i = 0; i < children.Length; i++)
+            {
+                var child = children[i];
+                var candidate = Path.Combine(child.FullName, "BlenderTools");
+                if (Directory.Exists(candidate))
                 {
-                    var candidate = Path.Combine(child.FullName, "BlenderTools");
-                    if (Directory.Exists(candidate))
+                    try
                     {
-                        try
-                        {
-                            // 属性が読み取り専用などで削除できない場合があるため属性をクリアしてから削除する
-                            ClearReadOnlyAttributes(new DirectoryInfo(candidate));
-                            Directory.Delete(candidate, true);
-                            deletedCount++;
-                        }
-                        catch (Exception)
-                        {
-                            failedCount++;
-                        }
+                        ClearReadOnlyAttributes(new DirectoryInfo(candidate));
+                        Directory.Delete(candidate, true);
+                        deletedCount++;
+                    }
+                    catch
+                    {
+                        failedCount++;
                     }
                 }
 
-                if (deletedCount == 0 && failedCount == 0)
-                {
-                    // なにも見つからなかった
-                    MessageBox.Show(this, "子フォルダ内に 'BlenderTools' は見つかりませんでした。", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                else
-                {
-                    var msg = $"削除成功: {deletedCount} 件\n失敗: {failedCount} 件";
-                    MessageBox.Show(this, msg, "処理完了", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
+                int percent = startPercent + (int)((i + 1) / (double)total * (endPercent - startPercent));
+                ReportProgress(progress, $"不要な 'BlenderTools' を削除中... ({i + 1}/{total})", percent);
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(this, "処理中にエラーが発生しました: " + ex.Message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+
+            return (deletedCount, failedCount);
         }
         
         private void ClearReadOnlyAttributes(DirectoryInfo dir)
@@ -220,38 +246,43 @@ namespace mochifitter_link_manager
             }
         }
 
-        private void CreateSymbolicLinks(string vrcRootDirPath, string blenderToolsDirPath)
+
+        // Non-UI core for background execution with progress between [startPercent, endPercent]
+        private int CreateSymbolicLinksCore(string vrcRootDirPath, string blenderToolsDirPath, IProgress<(string message, int percent)> progress, int startPercent, int endPercent)
         {
             if (string.IsNullOrWhiteSpace(vrcRootDirPath))
             {
-                return;
+                return 0;
             }
 
-            try
+            var rootDir = new DirectoryInfo(vrcRootDirPath);
+            if (!rootDir.Exists)
             {
-                var rootDir = new DirectoryInfo(vrcRootDirPath);
-                if (!rootDir.Exists)
-                {
-                    MessageBox.Show(this, "指定されたルートフォルダが存在しません。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
+                throw new DirectoryNotFoundException("指定されたルートフォルダが存在しません。");
+            }
 
-                // 探索は1階層分のみ（rootDir の直下のフォルダ）
-                foreach (var child in rootDir.GetDirectories())
+            var children = rootDir.GetDirectories();
+            int total = Math.Max(1, children.Length);
+            int created = 0;
+            for (int i = 0; i < children.Length; i++)
+            {
+                var child = children[i];
+                bool isAvaterDir = File.Exists(Path.Join(child.FullName, "VRC.SDK3A.csproj"));
+                if (isAvaterDir)
                 {
-                    // Acatarプロジェクトに導入されるVRChat Avatar SDKがVRC.SDK3A.csprojを生成する
-                    bool isAvaterDir = File.Exists(Path.Join(child.FullName, "VRC.SDK3A.csproj"));
-                    if (!isAvaterDir) { continue; }
-
                     var linkPath = Path.Combine(child.FullName, "BlenderTools");
-                    if ( Directory.Exists(linkPath) || File.Exists(linkPath)) { continue; }
-                    CreateSymbolicLink(linkPath, blenderToolsDirPath);
+                    if (!Directory.Exists(linkPath) && !File.Exists(linkPath))
+                    {
+                        CreateSymbolicLink(linkPath, blenderToolsDirPath);
+                        created++;
+                    }
                 }
+
+                int percent = startPercent + (int)((i + 1) / (double)total * (endPercent - startPercent));
+                ReportProgress(progress, $"シンボリックリンク作成中... ({i + 1}/{total})", percent);
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(this, "シンボリックリンク作成中にエラーが発生しました: " + ex.Message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+
+            return created;
         }
 
         private void CreateSymbolicLink(string linkPath, string targetPath)
