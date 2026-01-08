@@ -92,6 +92,7 @@ namespace mochifitter_link_manager
             }
 
             MoveBlenderToolsToRoot(BlenderToolsDirectory_TextBox.Text, vrcRootDir.FullName);
+            DeleteOthersBlenderTools(vrcRootDir.FullName);
         }
 
         private void MoveBlenderToolsToRoot(string blenderToolsDirPath, string vrcRootDirPath)
@@ -139,7 +140,81 @@ namespace mochifitter_link_manager
 
         private void DeleteOthersBlenderTools(string vrcRootDirPath)
         {
+            if (string.IsNullOrWhiteSpace(vrcRootDirPath))
+            {
+                return;
+            }
 
+            try
+            {
+                var rootDir = new DirectoryInfo(vrcRootDirPath);
+                if (!rootDir.Exists)
+                {
+                    MessageBox.Show(this, "指定されたルートフォルダが存在しません。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                int deletedCount = 0;
+                int failedCount = 0;
+
+                // 探索は1階層分のみ（rootDir の直下のフォルダ）
+                foreach (var child in rootDir.GetDirectories())
+                {
+                    var candidate = Path.Combine(child.FullName, "BlenderTools");
+                    if (Directory.Exists(candidate))
+                    {
+                        try
+                        {
+                            // 属性が読み取り専用などで削除できない場合があるため属性をクリアしてから削除する
+                            ClearReadOnlyAttributes(new DirectoryInfo(candidate));
+                            Directory.Delete(candidate, true);
+                            deletedCount++;
+                        }
+                        catch (Exception)
+                        {
+                            failedCount++;
+                        }
+                    }
+                }
+
+                if (deletedCount == 0 && failedCount == 0)
+                {
+                    // なにも見つからなかった
+                    MessageBox.Show(this, "子フォルダ内に 'BlenderTools' は見つかりませんでした。", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    var msg = $"削除成功: {deletedCount} 件\n失敗: {failedCount} 件";
+                    MessageBox.Show(this, msg, "処理完了", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, "処理中にエラーが発生しました: " + ex.Message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        
+        private void ClearReadOnlyAttributes(DirectoryInfo dir)
+        {
+            // ディレクトリとファイルの属性を再帰的に通常に戻す
+            try
+            {
+                foreach (var subDir in dir.GetDirectories("*", SearchOption.AllDirectories))
+                {
+                    subDir.Attributes = FileAttributes.Normal;
+                }
+
+                foreach (var file in dir.GetFiles("*", SearchOption.AllDirectories))
+                {
+                    file.Attributes = FileAttributes.Normal;
+                }
+
+                dir.Attributes = FileAttributes.Normal;
+            }
+            catch
+            {
+                // 属性変更に失敗しても削除処理に任せる（上位で捕捉される）
+            }
         }
 
         private void CreateSymbolicLink(string targetPath, string linkPath)
