@@ -117,14 +117,14 @@ namespace mochifitter_link_manager
                     {
                         // 0-10% Move
                         ReportProgress(progress, "BlenderTools を VRCRoot へ移動しています...", 5);
-                        MoveBlenderToolsToRootCore(blenderToolsPath, rootPath);
+                        string movedBlenderToolsDirPath = MoveBlenderToolsToRootCore(blenderToolsPath, rootPath);
                         ReportProgress(progress, "移動完了", 10);
 
                         // 10-70% Delete others
                         (deletedCount, failedDeleteCount) = DeleteOthersBlenderToolsCore(rootPath, progress, 10, 70);
 
                         // 70-100% Create links
-                        linkCreatedCount = CreateSymbolicLinksCore(rootPath, blenderToolsPath, progress, 70, 100);
+                        linkCreatedCount = CreateSymbolicLinksCore(rootPath, movedBlenderToolsDirPath, progress, 70, 100);
                         ReportProgress(progress, "リンク作成完了", 100);
                     });
 
@@ -147,8 +147,16 @@ namespace mochifitter_link_manager
             progress?.Report((message, Math.Max(0, Math.Min(100, percent))));
         }
 
-        // Non-UI core for background execution
-        private void MoveBlenderToolsToRootCore(string blenderToolsDirPath, string vrcRootDirPath)
+        /// <summary>
+        /// BlenderToolsフォルダをVRCRoot直下に移動
+        /// </summary>
+        /// <param name="blenderToolsDirPath">BlenderToolsフォルダ</param>
+        /// <param name="vrcRootDirPath">VRChatプロジェクト群のルートフォルダ</param>
+        /// <returns>移動後のBlenderToolsフォルダパス</returns>
+        /// <exception cref="ArgumentException">パスが無効</exception>
+        /// <exception cref="DirectoryNotFoundException">フォルダが存在しない</exception>
+        /// <exception cref="IOException">移動先にすでにフォルダが存在する</exception>
+        private string MoveBlenderToolsToRootCore(string blenderToolsDirPath, string vrcRootDirPath)
         {
             if (string.IsNullOrWhiteSpace(blenderToolsDirPath) || string.IsNullOrWhiteSpace(vrcRootDirPath))
             {
@@ -168,7 +176,7 @@ namespace mochifitter_link_manager
 
             if (string.Equals(sourceFull, targetFull, StringComparison.OrdinalIgnoreCase))
             {
-                return; // already in place
+                return targetFull; // already in place
             }
 
             if (Directory.Exists(targetFull) || File.Exists(targetFull))
@@ -177,6 +185,8 @@ namespace mochifitter_link_manager
             }
 
             Directory.Move(sourceFull, targetFull);
+
+            return targetFull;
         }
 
         // Non-UI core for background execution with progress between [startPercent, endPercent)
