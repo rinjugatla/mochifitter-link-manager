@@ -42,6 +42,7 @@
             this.BrowseVrcRootDirectory_Button.TabIndex = 2;
             this.BrowseVrcRootDirectory_Button.Text = "参照";
             this.BrowseVrcRootDirectory_Button.UseVisualStyleBackColor = true;
+            this.BrowseVrcRootDirectory_Button.Click += new System.EventHandler(this.BrowseVrcRootDirectory_Button_Click);
             // 
             // VrcRootDirectory_TextBox
             // 
