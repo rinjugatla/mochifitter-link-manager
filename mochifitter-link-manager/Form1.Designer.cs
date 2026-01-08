@@ -42,7 +42,7 @@
             BrowseBlenderToolsDirectory_Button.TabIndex = 2;
             BrowseBlenderToolsDirectory_Button.Text = "参照";
             BrowseBlenderToolsDirectory_Button.UseVisualStyleBackColor = true;
-            BrowseBlenderToolsDirectory_Button.Click += BrowseVrcRootDirectory_Button_Click;
+            BrowseBlenderToolsDirectory_Button.Click += BrowseBlenderToolsDirectory_Button_Click;
             // 
             // BlenderToolsDirectory_TextBox
             // 
@@ -50,6 +50,7 @@
             BlenderToolsDirectory_TextBox.Name = "BlenderToolsDirectory_TextBox";
             BlenderToolsDirectory_TextBox.Size = new Size(480, 23);
             BlenderToolsDirectory_TextBox.TabIndex = 4;
+            BlenderToolsDirectory_TextBox.TextChanged += BlenderToolsDirectory_TextBox_TextChanged;
             // 
             // BlenderToolsDirectory_Label
             // 

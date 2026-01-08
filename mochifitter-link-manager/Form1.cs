@@ -6,14 +6,13 @@ namespace mochifitter_link_manager
         {
             InitializeComponent();
             // Validate initial state and update when the text changes
-            BlenderToolsDirectory_TextBox.TextChanged += BlenderToolsDirectory_TextBox_TextChanged;
             UpdateCreateLinkButtonState();
         }
 
         /// <summary>
         /// BlenderToolsフォルダ参照ボタンのクリック処理
         /// </summary>
-        private void BrowseVrcRootDirectory_Button_Click(object? sender, EventArgs e)
+        private void BrowseBlenderToolsDirectory_Button_Click(object? sender, EventArgs e)
         {
             try
             {
