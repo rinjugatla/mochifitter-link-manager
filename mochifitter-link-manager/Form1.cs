@@ -85,12 +85,22 @@ namespace mochifitter_link_manager
                 var folderName = dirInfo.Name;
                 return string.Equals(folderName, "BlenderTools", StringComparison.OrdinalIgnoreCase)
                        && Directory.Exists(path) 
-                       && (dirInfo.Attributes & FileAttributes.ReparsePoint) != FileAttributes.ReparsePoint;
+                       && !IsSymbolicLink(path);
             }
             catch
             {
                 return false;
             }
+        }
+
+        /// <summary>
+        /// シンボリックリンクか
+        /// </summary>
+        /// <param name="path">フォルダパス</param>
+        private bool IsSymbolicLink(string path)
+        {
+            var dirInfo = new DirectoryInfo(path);
+            return (dirInfo.Attributes & FileAttributes.ReparsePoint) == FileAttributes.ReparsePoint;
         }
 
         /// <summary>
@@ -256,22 +266,23 @@ namespace mochifitter_link_manager
             {
                 var child = children[i];
                 var candidate = Path.Combine(child.FullName, "BlenderTools");
-                if (Directory.Exists(candidate))
-                {
-                    try
-                    {
-                        ClearReadOnlyAttributes(new DirectoryInfo(candidate));
-                        Directory.Delete(candidate, true);
-                        deletedCount++;
-                    }
-                    catch
-                    {
-                        failedCount++;
-                    }
-                }
 
                 int percent = startPercent + (int)((i + 1) / (double)total * (endPercent - startPercent));
                 ReportProgress(progress, $"不要な 'BlenderTools' を削除中... ({i + 1}/{total})", percent);
+                
+                bool needDelete = Directory.Exists(candidate) && !IsSymbolicLink(candidate);
+                if (!needDelete) { continue; }
+
+                try
+                {
+                    ClearReadOnlyAttributes(new DirectoryInfo(candidate));
+                    Directory.Delete(candidate, true);
+                    deletedCount++;
+                }
+                catch
+                {
+                    failedCount++;
+                }
             }
 
             return (deletedCount, failedCount);
