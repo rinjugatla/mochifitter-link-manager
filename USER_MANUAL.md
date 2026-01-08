@@ -8,20 +8,29 @@
 - Windows 10 / 11
 - .NET 8.0 で動作する Windows フォームアプリ
 
+## VRChat プロジェクト側の準備
+
+- 事前にVRChatプロジェクトで導入済みのもちふぃった～からBlenderToolsをダウンロードします
+  - 1プロジェクトでダウンロードすればOKです
+
 ## 準備（起動方法）
-- 開発環境でのビルド済み実行ファイルがある場合は、下記のファイルをダブルクリックで起動します。
-  - [mochifitter-link-manager/bin/Debug/net8.0-windows/mochifitter-link-manager.exe](mochifitter-link-manager/bin/Debug/net8.0-windows/mochifitter-link-manager.exe)
+
+- `mochifitter-link-manager-vx.y.z.zip`を解凍します
+- `mochifitter-link-manager.exe`を実行します
 - 初回のリンク作成が失敗する場合は、管理者として実行するか、Windows の「開発者モード」を有効化してください（後述）。
 
 ---
 
-## クイックスタート（使い方）
+## クイックスタート
+
 1. アプリを起動します。
-2. 画面右側の「BlenderToolsフォルダパス」横にある「参照」ボタンをクリックし、対象の `BlenderTools` フォルダを選択します。
+2. 「BlenderToolsフォルダパス」横にある「参照」ボタンをクリックし、対象の `BlenderTools` フォルダを選択します。
+   - **初回実行**の場合はVRChatプロジェクトフォルダ内の`BlenderTools`フォルダを選択します。
+   - **2回目以降**はVRChatプロジェクトフォルダの親フォルダの`BlenderTools`フォルダを選択します。
    - フォルダ名は厳密に `BlenderTools` である必要があります。
    - シンボリックリンクの `BlenderTools` は選択できません（通常フォルダのみ）。
-3. 「BlenderToolsをおまとめ」ボタンをクリックします。
-4. 進捗ダイアログが表示され、移動・削除・リンク作成の状況がわかります。完了後にサマリ（削除件数／失敗件数／作成リンク数）が表示されます。
+4. 「BlenderToolsをおまとめ」ボタンをクリックします。
+5. 進捗ダイアログが表示され、移動・削除・リンク作成の状況がわかります。完了後にサマリ（削除件数／失敗件数／作成リンク数）が表示されます。
 
 ---
 
