@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Windows.Forms;
 
 namespace mochifitter_link_manager
@@ -8,6 +9,9 @@ namespace mochifitter_link_manager
         public Form1()
         {
             InitializeComponent();
+            // Validate initial state and update when the text changes
+            BlenderToolsDirectory_TextBox.TextChanged += BlenderToolsDirectory_TextBox_TextChanged;
+            UpdateCreateLinkButtonState();
         }
 
         private void BrowseVrcRootDirectory_Button_Click(object? sender, EventArgs e)
@@ -25,6 +29,8 @@ namespace mochifitter_link_manager
                         if (string.Equals(System.IO.Path.GetFileName(selected), "BlenderTools", StringComparison.OrdinalIgnoreCase))
                         {
                             BlenderToolsDirectory_TextBox.Text = selected;
+                            // Ensure CreateLink button state is updated immediately after setting the text
+                            UpdateCreateLinkButtonState();
                         }
                         else
                         {
@@ -37,6 +43,40 @@ namespace mochifitter_link_manager
             {
                 MessageBox.Show(this, "フォルダ選択ダイアログを開けませんでした: " + ex.Message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void BlenderToolsDirectory_TextBox_TextChanged(object? sender, EventArgs e)
+        {
+            UpdateCreateLinkButtonState();
+        }
+
+        private void UpdateCreateLinkButtonState()
+        {
+            var path = BlenderToolsDirectory_TextBox.Text;
+            bool enabled = false;
+
+            if (!string.IsNullOrWhiteSpace(path))
+            {
+                try
+                {
+                    // Use DirectoryInfo to get the last segment reliably (handles trailing separators)
+                    var dirInfo = new DirectoryInfo(path);
+                    var folderName = dirInfo.Name;
+
+                    if (string.Equals(folderName, "BlenderTools", StringComparison.OrdinalIgnoreCase)
+                        && Directory.Exists(path))
+                    {
+                        enabled = true;
+                    }
+                }
+                catch
+                {
+                    // Any exceptions (e.g. invalid path format) result in disabled state
+                    enabled = false;
+                }
+            }
+
+            CreateLink_Button.Enabled = enabled;
         }
     }
 }
