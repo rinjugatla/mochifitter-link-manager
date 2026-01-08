@@ -245,7 +245,7 @@ namespace mochifitter_link_manager
 
                     var linkPath = Path.Combine(child.FullName, "BlenderTools");
                     if ( Directory.Exists(linkPath) || File.Exists(linkPath)) { continue; }
-                    CreateSymbolicLink(blenderToolsDirPath, linkPath);
+                    CreateSymbolicLink(linkPath, blenderToolsDirPath);
                 }
             }
             catch (Exception ex)
@@ -254,7 +254,7 @@ namespace mochifitter_link_manager
             }
         }
 
-        private void CreateSymbolicLink(string targetPath, string linkPath)
+        private void CreateSymbolicLink(string linkPath, string targetPath)
         {
             try
             {
