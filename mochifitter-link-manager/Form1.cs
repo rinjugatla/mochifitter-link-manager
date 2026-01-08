@@ -2,6 +2,18 @@ namespace mochifitter_link_manager
 {
     public partial class Form1 : Form
     {
+        /// <summary>アバターフォルダに固有で存在するファイル</summary>
+        private readonly string avaterProjectFileName = "VRC.SDK3A.csproj";
+
+        /// <summary>BlenderToolsフォルダの位置</summary>
+        private enum BlenderToolsPlace
+        {
+            /// <summary>アバターフォルダ内に存在する</summary>
+            InAvaterDirectory,
+            /// <summary>すでにルートフォルダに移動済み</summary>
+            InVRCRootDirectory,
+        }
+
         public Form1()
         {
             InitializeComponent();
@@ -86,7 +98,8 @@ namespace mochifitter_link_manager
         /// </summary>
         private async void CreateLink_Button_Click(object sender, EventArgs e)
         {
-            bool isValidBlenderToolsDir = ValidateBlenderToolsDirectory(BlenderToolsDirectory_TextBox.Text);
+            var blenderToolsPath = BlenderToolsDirectory_TextBox.Text;
+            bool isValidBlenderToolsDir = ValidateBlenderToolsDirectory(blenderToolsPath);
             if (!isValidBlenderToolsDir)
             {
                 MessageBox.Show(this, "BlenderToolsフォルダのパスが無効です。正しいフォルダを指定してください。", "無効なフォルダ", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -94,8 +107,15 @@ namespace mochifitter_link_manager
             }
 
             // フォルダ構成
+            // VRCRoot/BlenderTools
             // VRCRoot/VRchat Avatar Dir/BlenderTools
-            var vrcRootDir = new DirectoryInfo(BlenderToolsDirectory_TextBox.Text)?.Parent?.Parent;
+            var place = AnalyzeBlenderToolsPlacce(blenderToolsPath);
+            var vrcRootDir = place switch
+            {
+                BlenderToolsPlace.InAvaterDirectory => new DirectoryInfo(blenderToolsPath).Parent?.Parent,
+                BlenderToolsPlace.InVRCRootDirectory => new DirectoryInfo(blenderToolsPath).Parent,
+            };
+
             if (vrcRootDir == null || !vrcRootDir.Exists)
             {
                 MessageBox.Show(this, "VRCRootフォルダが見つかりません。BlenderToolsフォルダの正しいパスを指定してください。", "無効なフォルダ", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -107,7 +127,6 @@ namespace mochifitter_link_manager
                 progressDialog.Show(this);
                 progressDialog.UpdateStatus("準備中...", 0);
 
-                var blenderToolsPath = BlenderToolsDirectory_TextBox.Text;
                 var rootPath = vrcRootDir.FullName;
 
                 int deletedCount = 0;
@@ -125,7 +144,9 @@ namespace mochifitter_link_manager
                     {
                         // 0-10% Move
                         ReportProgress(progress, "BlenderTools を VRCRoot へ移動しています...", 5);
-                        string movedBlenderToolsDirPath = MoveBlenderToolsToRootCore(blenderToolsPath, rootPath);
+                        string movedBlenderToolsDirPath = place == BlenderToolsPlace.InAvaterDirectory ?
+                            MoveBlenderToolsToRootCore(blenderToolsPath, rootPath) :
+                            blenderToolsPath;
                         ReportProgress(progress, "移動完了", 10);
 
                         // 10-70% Delete others
@@ -153,6 +174,17 @@ namespace mochifitter_link_manager
         private static void ReportProgress(IProgress<(string message, int percent)> progress, string message, int percent)
         {
             progress?.Report((message, Math.Max(0, Math.Min(100, percent))));
+        }
+
+        /// <summary>
+        /// BlenderToolsフォルダの位置を解析
+        /// </summary>
+        /// <param name="blenderToolsDirPath">BlenderToolsフォルダパス</param>
+        private BlenderToolsPlace AnalyzeBlenderToolsPlacce(string blenderToolsDirPath)
+        {
+            var parent = new DirectoryInfo(blenderToolsDirPath).Parent;
+            bool isAvaterDir = parent != null && File.Exists(Path.Join(parent.FullName, avaterProjectFileName));
+            return isAvaterDir ? BlenderToolsPlace.InAvaterDirectory : BlenderToolsPlace.InVRCRootDirectory;
         }
 
         /// <summary>
@@ -299,7 +331,7 @@ namespace mochifitter_link_manager
             for (int i = 0; i < children.Length; i++)
             {
                 var child = children[i];
-                bool isAvaterDir = File.Exists(Path.Join(child.FullName, "VRC.SDK3A.csproj"));
+                bool isAvaterDir = File.Exists(Path.Join(child.FullName, avaterProjectFileName));
                 if (isAvaterDir)
                 {
                     var linkPath = Path.Combine(child.FullName, "BlenderTools");
