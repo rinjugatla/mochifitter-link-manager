@@ -28,37 +28,37 @@
         /// </summary>
         private void InitializeComponent()
         {
-            BrowseVrcRootDirectory_Button = new Button();
-            VrcRootDirectory_TextBox = new TextBox();
-            VrcRootDirectory_Label = new Label();
+            BrowseBlenderToolsDirectory_Button = new Button();
+            BlenderToolsDirectory_TextBox = new TextBox();
+            BlenderToolsDirectory_Label = new Label();
             CreateLink_Button = new Button();
             SuspendLayout();
             // 
-            // BrowseVrcRootDirectory_Button
+            // BrowseBlenderToolsDirectory_Button
             // 
-            this.BrowseVrcRootDirectory_Button.Location = new Point(645, 11);
-            this.BrowseVrcRootDirectory_Button.Name = "BrowseVrcRootDirectory_Button";
-            this.BrowseVrcRootDirectory_Button.Size = new Size(75, 23);
-            this.BrowseVrcRootDirectory_Button.TabIndex = 2;
-            this.BrowseVrcRootDirectory_Button.Text = "参照";
-            this.BrowseVrcRootDirectory_Button.UseVisualStyleBackColor = true;
-            this.BrowseVrcRootDirectory_Button.Click += new System.EventHandler(this.BrowseVrcRootDirectory_Button_Click);
+            BrowseBlenderToolsDirectory_Button.Location = new Point(645, 11);
+            BrowseBlenderToolsDirectory_Button.Name = "BrowseBlenderToolsDirectory_Button";
+            BrowseBlenderToolsDirectory_Button.Size = new Size(75, 23);
+            BrowseBlenderToolsDirectory_Button.TabIndex = 2;
+            BrowseBlenderToolsDirectory_Button.Text = "参照";
+            BrowseBlenderToolsDirectory_Button.UseVisualStyleBackColor = true;
+            BrowseBlenderToolsDirectory_Button.Click += BrowseVrcRootDirectory_Button_Click;
             // 
-            // VrcRootDirectory_TextBox
+            // BlenderToolsDirectory_TextBox
             // 
-            this.VrcRootDirectory_TextBox.Location = new Point(159, 12);
-            this.VrcRootDirectory_TextBox.Name = "VrcRootDirectory_TextBox";
-            this.VrcRootDirectory_TextBox.Size = new Size(480, 23);
-            this.VrcRootDirectory_TextBox.TabIndex = 4;
+            BlenderToolsDirectory_TextBox.Location = new Point(145, 12);
+            BlenderToolsDirectory_TextBox.Name = "BlenderToolsDirectory_TextBox";
+            BlenderToolsDirectory_TextBox.Size = new Size(480, 23);
+            BlenderToolsDirectory_TextBox.TabIndex = 4;
             // 
-            // VrcRootDirectory_Label
+            // BlenderToolsDirectory_Label
             // 
-            VrcRootDirectory_Label.AutoSize = true;
-            VrcRootDirectory_Label.Location = new Point(12, 15);
-            VrcRootDirectory_Label.Name = "VrcRootDirectory_Label";
-            VrcRootDirectory_Label.Size = new Size(141, 15);
-            VrcRootDirectory_Label.TabIndex = 5;
-            VrcRootDirectory_Label.Text = "VRCプロジェクトルートフォルダ";
+            BlenderToolsDirectory_Label.AutoSize = true;
+            BlenderToolsDirectory_Label.Location = new Point(12, 15);
+            BlenderToolsDirectory_Label.Name = "BlenderToolsDirectory_Label";
+            BlenderToolsDirectory_Label.Size = new Size(127, 15);
+            BlenderToolsDirectory_Label.TabIndex = 5;
+            BlenderToolsDirectory_Label.Text = "BlenderToolsフォルダパス";
             // 
             // CreateLink_Button
             // 
@@ -74,10 +74,10 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(731, 104);
-            Controls.Add(VrcRootDirectory_Label);
-            Controls.Add(this.VrcRootDirectory_TextBox);
+            Controls.Add(BlenderToolsDirectory_Label);
+            Controls.Add(BlenderToolsDirectory_TextBox);
             Controls.Add(CreateLink_Button);
-            Controls.Add(this.BrowseVrcRootDirectory_Button);
+            Controls.Add(BrowseBlenderToolsDirectory_Button);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             Name = "Form1";
@@ -88,9 +88,9 @@
 
         #endregion
 
-        private TextBox VrcRootDirectory_TextBox;
-        private Button BrowseVrcRootDirectory_Button;
-        private Label VrcRootDirectory_Label;
+        private TextBox BlenderToolsDirectory_TextBox;
+        private Button BrowseBlenderToolsDirectory_Button;
+        private Label BlenderToolsDirectory_Label;
         private Button CreateLink_Button;
     }
 }

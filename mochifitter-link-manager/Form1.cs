@@ -24,7 +24,7 @@ namespace mochifitter_link_manager
                         var selected = dialog.FileName;
                         if (string.Equals(System.IO.Path.GetFileName(selected), "BlenderTools", StringComparison.OrdinalIgnoreCase))
                         {
-                            VrcRootDirectory_TextBox.Text = selected;
+                            BlenderToolsDirectory_TextBox.Text = selected;
                         }
                         else
                         {
