@@ -238,8 +238,9 @@ namespace mochifitter_link_manager
                 // 探索は1階層分のみ（rootDir の直下のフォルダ）
                 foreach (var child in rootDir.GetDirectories())
                 {
+                    // Acatarプロジェクトに導入されるVRChat Avatar SDKがVRC.SDK3A.csprojを生成する
                     bool isAvaterDir = File.Exists(Path.Join(child.FullName, "VRC.SDK3A.csproj"));
-                    if (isAvaterDir) { continue; }
+                    if (!isAvaterDir) { continue; }
 
                     var linkPath = Path.Combine(child.FullName, "BlenderTools");
                     if ( Directory.Exists(linkPath) || File.Exists(linkPath)) { continue; }
