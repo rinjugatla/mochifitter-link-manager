@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.BrowseVrcRootDirectory_Button = new Button();
-            this.VrcRootDirectory_TextBox = new TextBox();
+            BrowseVrcRootDirectory_Button = new Button();
+            VrcRootDirectory_TextBox = new TextBox();
             VrcRootDirectory_Label = new Label();
             CreateLink_Button = new Button();
             SuspendLayout();
@@ -87,11 +87,8 @@
 
         #endregion
 
-        private Label label1;
-        private TextBox textBox1;
-        private Button button1;
-        private Button button2;
-        private TextBox textBox2;
+        private TextBox VrcRootDirectory_TextBox;
+        private Button BrowseVrcRootDirectory_Button;
         private Label VrcRootDirectory_Label;
         private Button CreateLink_Button;
     }
