@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Diagnostics;
 using System.Windows.Forms;
+using System.DirectoryServices.ActiveDirectory;
 
 namespace mochifitter_link_manager
 {
@@ -93,6 +94,7 @@ namespace mochifitter_link_manager
 
             MoveBlenderToolsToRoot(BlenderToolsDirectory_TextBox.Text, vrcRootDir.FullName);
             DeleteOthersBlenderTools(vrcRootDir.FullName);
+            CreateSymbolicLinks(vrcRootDir.FullName, BlenderToolsDirectory_TextBox.Text);
         }
 
         private void MoveBlenderToolsToRoot(string blenderToolsDirPath, string vrcRootDirPath)
@@ -217,12 +219,45 @@ namespace mochifitter_link_manager
             }
         }
 
-        private void CreateSymbolicLink(string targetPath, string linkPath)
+        private void CreateSymbolicLinks(string vrcRootDirPath, string blenderToolsDirPath)
+        {
+            if (string.IsNullOrWhiteSpace(vrcRootDirPath))
+            {
+                return;
+            }
+
+            try
+            {
+                var rootDir = new DirectoryInfo(vrcRootDirPath);
+                if (!rootDir.Exists)
+                {
+                    MessageBox.Show(this, "指定されたルートフォルダが存在しません。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // 探索は1階層分のみ（rootDir の直下のフォルダ）
+                foreach (var child in rootDir.GetDirectories())
+                {
+                    bool isAvaterDir = File.Exists(Path.Join(child.FullName, "VRC.SDK3A.csproj"));
+                    if (isAvaterDir) { continue; }
+
+                    var linkPath = Path.Combine(child.FullName, "BlenderTools");
+                    if ( Directory.Exists(linkPath) || File.Exists(linkPath)) { continue; }
+                    CreateSymbolicLink(blenderToolsDirPath, linkPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, "シンボリックリンク作成中にエラーが発生しました: " + ex.Message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void CreateSymbolicLink(string from, string to)
         {
             var processInfo = new ProcessStartInfo
             {
                 FileName = "cmd.exe",
-                Arguments = $"/c mklink /D \"{linkPath}\" \"{targetPath}\"",
+                Arguments = $"/c mklink /D \"{from}\" \"{to}\"",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
