@@ -36,9 +36,13 @@ namespace mochifitter_link_manager
                     BlenderToolsDirectory_TextBox.Text = savedPath;
                 }
             }
-            catch
+            catch (System.Configuration.ConfigurationErrorsException)
             {
-                // 設定の読み込みに失敗した場合は無視（空欄のまま）
+                // 設定ファイルが破損している場合は無視（空欄のまま）
+            }
+            catch (Exception)
+            {
+                // その他の設定の読み込みエラーは無視（空欄のまま）
             }
         }
 
@@ -52,9 +56,13 @@ namespace mochifitter_link_manager
                 Properties.Settings.Default.BlenderToolsDirectoryPath = BlenderToolsDirectory_TextBox.Text;
                 Properties.Settings.Default.Save();
             }
-            catch
+            catch (System.Configuration.ConfigurationErrorsException)
             {
-                // 設定の保存に失敗しても終了を妨げない
+                // 設定ファイルへの保存に失敗しても終了を妨げない
+            }
+            catch (Exception)
+            {
+                // その他の設定の保存エラーでも終了を妨げない
             }
             base.OnFormClosing(e);
         }
