@@ -205,7 +205,10 @@ namespace mochifitter_link_manager
         /// <returns>移動後のBlenderToolsフォルダパス</returns>
         /// <exception cref="ArgumentException">パスが無効</exception>
         /// <exception cref="DirectoryNotFoundException">フォルダが存在しない</exception>
-        /// <remarks>移動先に既にフォルダが存在する場合は移動せず、既存のパスを返します</remarks>
+        /// <remarks>
+        /// 移動先に既にフォルダが存在する場合は移動せず、既存のパスを返します。
+        /// この場合、移動元フォルダは後続の削除処理（DeleteOthersBlenderToolsCore）で削除されます。
+        /// </remarks>
         private string MoveBlenderToolsToRootCore(string blenderToolsDirPath, string vrcRootDirPath)
         {
             if (string.IsNullOrWhiteSpace(blenderToolsDirPath) || string.IsNullOrWhiteSpace(vrcRootDirPath))
