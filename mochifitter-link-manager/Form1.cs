@@ -5,6 +5,12 @@ namespace mochifitter_link_manager
         /// <summary>アバターフォルダに固有で存在するファイル</summary>
         private readonly string avaterProjectFileName = "VRC.SDK3A.csproj";
 
+        /// <summary>処理開始時刻</summary>
+        private DateTime processingStartTime;
+
+        /// <summary>処理時間表示用タイマー</summary>
+        private readonly System.Windows.Forms.Timer processingTimer;
+
         /// <summary>BlenderToolsフォルダの位置</summary>
         private enum BlenderToolsPlace
         {
@@ -17,6 +23,12 @@ namespace mochifitter_link_manager
         public Form1()
         {
             InitializeComponent();
+            
+            // Initialize processing timer
+            processingTimer = new System.Windows.Forms.Timer();
+            processingTimer.Interval = 1000; // 1秒ごとに更新
+            processingTimer.Tick += ProcessingTimer_Tick;
+            
             // Load saved path from settings
             LoadSavedBlenderToolsPath();
             // Validate initial state and update when the text changes
@@ -118,6 +130,85 @@ namespace mochifitter_link_manager
         }
 
         /// <summary>
+        /// 進捗状況を更新
+        /// </summary>
+        /// <param name="message">表示メッセージ</param>
+        /// <param name="percent">進捗率(0-100)</param>
+        private void UpdateProgressStatus(string message, int percent)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new Action<string, int>(UpdateProgressStatus), message, percent);
+                return;
+            }
+
+            ProgressStatus_Label.Text = message;
+            Progress_ProgressBar.Value = Math.Max(0, Math.Min(100, percent));
+        }
+
+        /// <summary>
+        /// 進捗状況をクリア
+        /// </summary>
+        private void ClearProgressStatus()
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new Action(ClearProgressStatus));
+                return;
+            }
+
+            ProgressStatus_Label.Text = string.Empty;
+            Progress_ProgressBar.Value = 0;
+        }
+
+        /// <summary>
+        /// 処理中の状態にする
+        /// </summary>
+        private void SetProcessingState(bool isProcessing)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new Action<bool>(SetProcessingState), isProcessing);
+                return;
+            }
+
+            BrowseBlenderToolsDirectory_Button.Enabled = !isProcessing;
+            CreateLink_Button.Enabled = !isProcessing;
+            BlenderToolsDirectory_TextBox.ReadOnly = isProcessing;
+            Progress_ProgressBar.Visible = isProcessing;
+
+            if (isProcessing)
+            {
+                processingStartTime = DateTime.Now;
+                ProcessingTime_Label.Text = "処理時間: 0秒";
+
+                // タイマーを開始
+                processingTimer.Start();
+            }
+            else
+            {
+                // タイマーを停止
+                processingTimer.Stop();
+
+                // 最終的な処理時間を表示
+                var elapsed = DateTime.Now - processingStartTime;
+                ProcessingTime_Label.Text = $"処理時間: {elapsed.TotalSeconds:F1}秒";
+
+                // コントロールの状態を復元
+                UpdateCreateLinkButtonState();
+            }
+        }
+
+        /// <summary>
+        /// 処理時間表示タイマーのイベントハンドラ
+        /// </summary>
+        private void ProcessingTimer_Tick(object? sender, EventArgs e)
+        {
+            var elapsed = DateTime.Now - processingStartTime;
+            ProcessingTime_Label.Text = $"処理時間: {elapsed.TotalSeconds:F1}秒";
+        }
+
+        /// <summary>
         /// BlenderToolsフォルダパスを検証
         /// </summary>
         /// <param name="path">BlenderToolsフォルダパス</param>
@@ -178,59 +269,59 @@ namespace mochifitter_link_manager
                 return;
             }
 
-            using (var progressDialog = new ProgressDialog())
+            // 処理中の状態にする
+            SetProcessingState(true);
+            UpdateProgressStatus("準備中...", 0);
+
+            var rootPath = vrcRootDir.FullName;
+
+            int deletedCount = 0;
+            int failedDeleteCount = 0;
+            int linkCreatedCount = 0;
+            string movedBlenderToolsDirPath = string.Empty;
+
+            var progress = new Progress<(string message, int percent)>(update =>
             {
-                progressDialog.Show(this);
-                progressDialog.UpdateStatus("準備中...", 0);
+                UpdateProgressStatus(update.message, update.percent);
+            });
 
-                var rootPath = vrcRootDir.FullName;
-
-                int deletedCount = 0;
-                int failedDeleteCount = 0;
-                int linkCreatedCount = 0;
-                string movedBlenderToolsDirPath = string.Empty;
-
-                var progress = new Progress<(string message, int percent)>(update =>
+            try
+            {
+                await Task.Run(() =>
                 {
-                    progressDialog.UpdateStatus(update.message, update.percent);
+                    // 0-10% Move
+                    ReportProgress(progress, "BlenderTools を VRCRoot へ移動しています...", 5);
+                    movedBlenderToolsDirPath = place == BlenderToolsPlace.InAvaterDirectory ?
+                        MoveBlenderToolsToRootCore(blenderToolsPath, rootPath) :
+                        blenderToolsPath;
+                    ReportProgress(progress, "移動完了", 10);
+
+                    // 10-70% Delete others
+                    (deletedCount, failedDeleteCount) = DeleteOthersBlenderToolsCore(rootPath, progress, 10, 70);
+
+                    // 70-100% Create links
+                    linkCreatedCount = CreateSymbolicLinksCore(rootPath, movedBlenderToolsDirPath, progress, 70, 100);
+                    ReportProgress(progress, "リンク作成完了", 100);
                 });
 
-                try
+                // 処理成功後、ルートフォルダのBlenderToolsパスをテキストボックスに自動入力
+                if (!string.IsNullOrWhiteSpace(movedBlenderToolsDirPath))
                 {
-                    await Task.Run(() =>
-                    {
-                        // 0-10% Move
-                        ReportProgress(progress, "BlenderTools を VRCRoot へ移動しています...", 5);
-                        movedBlenderToolsDirPath = place == BlenderToolsPlace.InAvaterDirectory ?
-                            MoveBlenderToolsToRootCore(blenderToolsPath, rootPath) :
-                            blenderToolsPath;
-                        ReportProgress(progress, "移動完了", 10);
-
-                        // 10-70% Delete others
-                        (deletedCount, failedDeleteCount) = DeleteOthersBlenderToolsCore(rootPath, progress, 10, 70);
-
-                        // 70-100% Create links
-                        linkCreatedCount = CreateSymbolicLinksCore(rootPath, movedBlenderToolsDirPath, progress, 70, 100);
-                        ReportProgress(progress, "リンク作成完了", 100);
-                    });
-
-                    // 処理成功後、ルートフォルダのBlenderToolsパスをテキストボックスに自動入力
-                    if (!string.IsNullOrWhiteSpace(movedBlenderToolsDirPath))
-                    {
-                        BlenderToolsDirectory_TextBox.Text = movedBlenderToolsDirPath;
-                    }
-
-                    string summary = $"削除成功: {deletedCount} 件\n失敗: {failedDeleteCount} 件\n作成したリンク: {linkCreatedCount} 件";
-                    MessageBox.Show(this, summary, "処理完了", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    BlenderToolsDirectory_TextBox.Text = movedBlenderToolsDirPath;
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(this, "処理中にエラーが発生しました: " + ex.Message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                finally
-                {
-                    progressDialog.Close();
-                }
+
+                string summary = $"削除成功: {deletedCount} 件\n失敗: {failedDeleteCount} 件\n作成したリンク: {linkCreatedCount} 件";
+                MessageBox.Show(this, summary, "処理完了", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, "処理中にエラーが発生しました: " + ex.Message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                // 処理中の状態を解除
+                SetProcessingState(false);
+                ClearProgressStatus();
             }
         }
 
