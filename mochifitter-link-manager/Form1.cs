@@ -9,7 +9,7 @@ namespace mochifitter_link_manager
         private DateTime processingStartTime;
 
         /// <summary>処理時間表示用タイマー</summary>
-        private System.Windows.Forms.Timer? processingTimer;
+        private readonly System.Windows.Forms.Timer processingTimer;
 
         /// <summary>BlenderToolsフォルダの位置</summary>
         private enum BlenderToolsPlace
@@ -23,6 +23,12 @@ namespace mochifitter_link_manager
         public Form1()
         {
             InitializeComponent();
+            
+            // Initialize processing timer
+            processingTimer = new System.Windows.Forms.Timer();
+            processingTimer.Interval = 1000; // 1秒ごとに更新
+            processingTimer.Tick += ProcessingTimer_Tick;
+            
             // Load saved path from settings
             LoadSavedBlenderToolsPath();
             // Validate initial state and update when the text changes
@@ -141,6 +147,21 @@ namespace mochifitter_link_manager
         }
 
         /// <summary>
+        /// 進捗状況をクリア
+        /// </summary>
+        private void ClearProgressStatus()
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new Action(ClearProgressStatus));
+                return;
+            }
+
+            ProgressStatus_Label.Text = string.Empty;
+            Progress_ProgressBar.Value = 0;
+        }
+
+        /// <summary>
         /// 処理中の状態にする
         /// </summary>
         private void SetProcessingState(bool isProcessing)
@@ -162,20 +183,12 @@ namespace mochifitter_link_manager
                 ProcessingTime_Label.Text = "処理時間: 0秒";
 
                 // タイマーを開始
-                processingTimer = new System.Windows.Forms.Timer();
-                processingTimer.Interval = 1000; // 1秒ごとに更新
-                processingTimer.Tick += ProcessingTimer_Tick;
                 processingTimer.Start();
             }
             else
             {
                 // タイマーを停止
-                if (processingTimer != null)
-                {
-                    processingTimer.Stop();
-                    processingTimer.Dispose();
-                    processingTimer = null;
-                }
+                processingTimer.Stop();
 
                 // 最終的な処理時間を表示
                 var elapsed = DateTime.Now - processingStartTime;
@@ -308,7 +321,7 @@ namespace mochifitter_link_manager
             {
                 // 処理中の状態を解除
                 SetProcessingState(false);
-                UpdateProgressStatus("", 0);
+                ClearProgressStatus();
             }
         }
 
