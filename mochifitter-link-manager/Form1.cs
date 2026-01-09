@@ -2,15 +2,15 @@ namespace mochifitter_link_manager
 {
     public partial class Form1 : Form
     {
-        /// <summary>ƒAƒoƒ^[ƒtƒHƒ‹ƒ_‚ÉŒÅ—L‚Å‘¶İ‚·‚éƒtƒ@ƒCƒ‹</summary>
+        /// <summary>ã‚¢ãƒã‚¿ãƒ¼ãƒ•ã‚©ãƒ«ãƒ€ã«å›ºæœ‰ã§å­˜åœ¨ã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«</summary>
         private readonly string avaterProjectFileName = "VRC.SDK3A.csproj";
 
-        /// <summary>BlenderToolsƒtƒHƒ‹ƒ_‚ÌˆÊ’u</summary>
+        /// <summary>BlenderToolsãƒ•ã‚©ãƒ«ãƒ€ã®ä½ç½®</summary>
         private enum BlenderToolsPlace
         {
-            /// <summary>ƒAƒoƒ^[ƒtƒHƒ‹ƒ_“à‚É‘¶İ‚·‚é</summary>
+            /// <summary>ã‚¢ãƒã‚¿ãƒ¼ãƒ•ã‚©ãƒ«ãƒ€å†…ã«å­˜åœ¨ã™ã‚‹</summary>
             InAvaterDirectory,
-            /// <summary>‚·‚Å‚Éƒ‹[ƒgƒtƒHƒ‹ƒ_‚ÉˆÚ“®Ï‚İ</summary>
+            /// <summary>ã™ã§ã«ãƒ«ãƒ¼ãƒˆãƒ•ã‚©ãƒ«ãƒ€ã«ç§»å‹•æ¸ˆã¿</summary>
             InVRCRootDirectory,
         }
 
@@ -22,7 +22,7 @@ namespace mochifitter_link_manager
         }
 
         /// <summary>
-        /// BlenderToolsƒtƒHƒ‹ƒ_QÆƒ{ƒ^ƒ“‚ÌƒNƒŠƒbƒNˆ—
+        /// BlenderToolsãƒ•ã‚©ãƒ«ãƒ€å‚ç…§ãƒœã‚¿ãƒ³ã®ã‚¯ãƒªãƒƒã‚¯å‡¦ç†
         /// </summary>
         private void BrowseBlenderToolsDirectory_Button_Click(object? sender, EventArgs e)
         {
@@ -44,19 +44,19 @@ namespace mochifitter_link_manager
                         }
                         else
                         {
-                            MessageBox.Show(this, "ƒtƒHƒ‹ƒ_–¼‚Í 'BlenderTools' ‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢B", "–³Œø‚ÈƒtƒHƒ‹ƒ_", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            MessageBox.Show(this, "ãƒ•ã‚©ãƒ«ãƒ€åã¯ 'BlenderTools' ã‚’é¸æŠã—ã¦ãã ã•ã„ã€‚", "ç„¡åŠ¹ãªãƒ•ã‚©ãƒ«ãƒ€", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, "ƒtƒHƒ‹ƒ_‘I‘ğƒ_ƒCƒAƒƒO‚ğŠJ‚¯‚Ü‚¹‚ñ‚Å‚µ‚½: " + ex.Message, "ƒGƒ‰[", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(this, "ãƒ•ã‚©ãƒ«ãƒ€é¸æŠãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã‚’é–‹ã‘ã¾ã›ã‚“ã§ã—ãŸ: " + ex.Message, "ã‚¨ãƒ©ãƒ¼", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         /// <summary>
-        /// ƒtƒHƒ‹ƒ_ƒpƒX•ÏX‚Ìˆ—
+        /// ãƒ•ã‚©ãƒ«ãƒ€ãƒ‘ã‚¹å¤‰æ›´æ™‚ã®å‡¦ç†
         /// </summary>
         private void BlenderToolsDirectory_TextBox_TextChanged(object? sender, EventArgs e)
         {
@@ -64,7 +64,7 @@ namespace mochifitter_link_manager
         }
 
         /// <summary>
-        /// ‚Ü‚Æ‚ßƒ{ƒ^ƒ“‚Ìó‘ÔXV
+        /// ã¾ã¨ã‚ãƒœã‚¿ãƒ³ã®çŠ¶æ…‹æ›´æ–°
         /// </summary>
         private void UpdateCreateLinkButtonState()
         {
@@ -72,9 +72,9 @@ namespace mochifitter_link_manager
         }
 
         /// <summary>
-        /// BlenderToolsƒtƒHƒ‹ƒ_ƒpƒX‚ğŒŸØ
+        /// BlenderToolsãƒ•ã‚©ãƒ«ãƒ€ãƒ‘ã‚¹ã‚’æ¤œè¨¼
         /// </summary>
-        /// <param name="path">BlenderToolsƒtƒHƒ‹ƒ_ƒpƒX</param>
+        /// <param name="path">BlenderToolsãƒ•ã‚©ãƒ«ãƒ€ãƒ‘ã‚¹</param>
         private bool ValidateBlenderToolsDirectory(string path)
         {
             if (string.IsNullOrWhiteSpace(path)) { return false; }
@@ -94,9 +94,9 @@ namespace mochifitter_link_manager
         }
 
         /// <summary>
-        /// ƒVƒ“ƒ{ƒŠƒbƒNƒŠƒ“ƒN‚©
+        /// ã‚·ãƒ³ãƒœãƒªãƒƒã‚¯ãƒªãƒ³ã‚¯ã‹
         /// </summary>
-        /// <param name="path">ƒtƒHƒ‹ƒ_ƒpƒX</param>
+        /// <param name="path">ãƒ•ã‚©ãƒ«ãƒ€ãƒ‘ã‚¹</param>
         private bool IsSymbolicLink(string path)
         {
             var dirInfo = new DirectoryInfo(path);
@@ -104,7 +104,7 @@ namespace mochifitter_link_manager
         }
 
         /// <summary>
-        /// BlenderToolsƒtƒHƒ‹ƒ_‚ğVRCRoot’¼‰º‚ÉˆÚ“®‚µA•s—v‚ÈBlenderToolsƒtƒHƒ‹ƒ_‚ğíœ‚µAƒVƒ“ƒ{ƒŠƒbƒNƒŠƒ“ƒN‚ğì¬
+        /// BlenderToolsãƒ•ã‚©ãƒ«ãƒ€ã‚’VRCRootç›´ä¸‹ã«ç§»å‹•ã—ã€ä¸è¦ãªBlenderToolsãƒ•ã‚©ãƒ«ãƒ€ã‚’å‰Šé™¤ã—ã€ã‚·ãƒ³ãƒœãƒªãƒƒã‚¯ãƒªãƒ³ã‚¯ã‚’ä½œæˆ
         /// </summary>
         private async void CreateLink_Button_Click(object sender, EventArgs e)
         {
@@ -112,11 +112,11 @@ namespace mochifitter_link_manager
             bool isValidBlenderToolsDir = ValidateBlenderToolsDirectory(blenderToolsPath);
             if (!isValidBlenderToolsDir)
             {
-                MessageBox.Show(this, "BlenderToolsƒtƒHƒ‹ƒ_‚ÌƒpƒX‚ª–³Œø‚Å‚·B³‚µ‚¢ƒtƒHƒ‹ƒ_‚ğw’è‚µ‚Ä‚­‚¾‚³‚¢B", "–³Œø‚ÈƒtƒHƒ‹ƒ_", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(this, "BlenderToolsãƒ•ã‚©ãƒ«ãƒ€ã®ãƒ‘ã‚¹ãŒç„¡åŠ¹ã§ã™ã€‚æ­£ã—ã„ãƒ•ã‚©ãƒ«ãƒ€ã‚’æŒ‡å®šã—ã¦ãã ã•ã„ã€‚", "ç„¡åŠ¹ãªãƒ•ã‚©ãƒ«ãƒ€", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // ƒtƒHƒ‹ƒ_\¬
+            // ãƒ•ã‚©ãƒ«ãƒ€æ§‹æˆ
             // VRCRoot/BlenderTools
             // VRCRoot/VRchat Avatar Dir/BlenderTools
             var place = AnalyzeBlenderToolsPlacce(blenderToolsPath);
@@ -128,14 +128,14 @@ namespace mochifitter_link_manager
 
             if (vrcRootDir == null || !vrcRootDir.Exists)
             {
-                MessageBox.Show(this, "VRCRootƒtƒHƒ‹ƒ_‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñBBlenderToolsƒtƒHƒ‹ƒ_‚Ì³‚µ‚¢ƒpƒX‚ğw’è‚µ‚Ä‚­‚¾‚³‚¢B", "–³Œø‚ÈƒtƒHƒ‹ƒ_", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(this, "VRCRootãƒ•ã‚©ãƒ«ãƒ€ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚BlenderToolsãƒ•ã‚©ãƒ«ãƒ€ã®æ­£ã—ã„ãƒ‘ã‚¹ã‚’æŒ‡å®šã—ã¦ãã ã•ã„ã€‚", "ç„¡åŠ¹ãªãƒ•ã‚©ãƒ«ãƒ€", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             using (var progressDialog = new ProgressDialog())
             {
                 progressDialog.Show(this);
-                progressDialog.UpdateStatus("€”õ’†...", 0);
+                progressDialog.UpdateStatus("æº–å‚™ä¸­...", 0);
 
                 var rootPath = vrcRootDir.FullName;
 
@@ -153,26 +153,26 @@ namespace mochifitter_link_manager
                     await Task.Run(() =>
                     {
                         // 0-10% Move
-                        ReportProgress(progress, "BlenderTools ‚ğ VRCRoot ‚ÖˆÚ“®‚µ‚Ä‚¢‚Ü‚·...", 5);
+                        ReportProgress(progress, "BlenderTools ã‚’ VRCRoot ã¸ç§»å‹•ã—ã¦ã„ã¾ã™...", 5);
                         string movedBlenderToolsDirPath = place == BlenderToolsPlace.InAvaterDirectory ?
                             MoveBlenderToolsToRootCore(blenderToolsPath, rootPath) :
                             blenderToolsPath;
-                        ReportProgress(progress, "ˆÚ“®Š®—¹", 10);
+                        ReportProgress(progress, "ç§»å‹•å®Œäº†", 10);
 
                         // 10-70% Delete others
                         (deletedCount, failedDeleteCount) = DeleteOthersBlenderToolsCore(rootPath, progress, 10, 70);
 
                         // 70-100% Create links
                         linkCreatedCount = CreateSymbolicLinksCore(rootPath, movedBlenderToolsDirPath, progress, 70, 100);
-                        ReportProgress(progress, "ƒŠƒ“ƒNì¬Š®—¹", 100);
+                        ReportProgress(progress, "ãƒªãƒ³ã‚¯ä½œæˆå®Œäº†", 100);
                     });
 
-                    string summary = $"íœ¬Œ÷: {deletedCount} Œ\n¸”s: {failedDeleteCount} Œ\nì¬‚µ‚½ƒŠƒ“ƒN: {linkCreatedCount} Œ";
-                    MessageBox.Show(this, summary, "ˆ—Š®—¹", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    string summary = $"å‰Šé™¤æˆåŠŸ: {deletedCount} ä»¶\nå¤±æ•—: {failedDeleteCount} ä»¶\nä½œæˆã—ãŸãƒªãƒ³ã‚¯: {linkCreatedCount} ä»¶";
+                    MessageBox.Show(this, summary, "å‡¦ç†å®Œäº†", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(this, "ˆ—’†‚ÉƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½: " + ex.Message, "ƒGƒ‰[", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(this, "å‡¦ç†ä¸­ã«ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸ: " + ex.Message, "ã‚¨ãƒ©ãƒ¼", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 finally
                 {
@@ -187,9 +187,9 @@ namespace mochifitter_link_manager
         }
 
         /// <summary>
-        /// BlenderToolsƒtƒHƒ‹ƒ_‚ÌˆÊ’u‚ğ‰ğÍ
+        /// BlenderToolsãƒ•ã‚©ãƒ«ãƒ€ã®ä½ç½®ã‚’è§£æ
         /// </summary>
-        /// <param name="blenderToolsDirPath">BlenderToolsƒtƒHƒ‹ƒ_ƒpƒX</param>
+        /// <param name="blenderToolsDirPath">BlenderToolsãƒ•ã‚©ãƒ«ãƒ€ãƒ‘ã‚¹</param>
         private BlenderToolsPlace AnalyzeBlenderToolsPlacce(string blenderToolsDirPath)
         {
             var parent = new DirectoryInfo(blenderToolsDirPath).Parent;
@@ -198,25 +198,25 @@ namespace mochifitter_link_manager
         }
 
         /// <summary>
-        /// BlenderToolsƒtƒHƒ‹ƒ_‚ğVRCRoot’¼‰º‚ÉˆÚ“®
+        /// BlenderToolsãƒ•ã‚©ãƒ«ãƒ€ã‚’VRCRootç›´ä¸‹ã«ç§»å‹•
         /// </summary>
-        /// <param name="blenderToolsDirPath">BlenderToolsƒtƒHƒ‹ƒ_</param>
-        /// <param name="vrcRootDirPath">VRChatƒvƒƒWƒFƒNƒgŒQ‚Ìƒ‹[ƒgƒtƒHƒ‹ƒ_</param>
-        /// <returns>ˆÚ“®Œã‚ÌBlenderToolsƒtƒHƒ‹ƒ_ƒpƒX</returns>
-        /// <exception cref="ArgumentException">ƒpƒX‚ª–³Œø</exception>
-        /// <exception cref="DirectoryNotFoundException">ƒtƒHƒ‹ƒ_‚ª‘¶İ‚µ‚È‚¢</exception>
-        /// <exception cref="IOException">ˆÚ“®æ‚É‚·‚Å‚ÉƒtƒHƒ‹ƒ_‚ª‘¶İ‚·‚é</exception>
+        /// <param name="blenderToolsDirPath">BlenderToolsãƒ•ã‚©ãƒ«ãƒ€</param>
+        /// <param name="vrcRootDirPath">VRChatãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆç¾¤ã®ãƒ«ãƒ¼ãƒˆãƒ•ã‚©ãƒ«ãƒ€</param>
+        /// <returns>ç§»å‹•å¾Œã®BlenderToolsãƒ•ã‚©ãƒ«ãƒ€ãƒ‘ã‚¹</returns>
+        /// <exception cref="ArgumentException">ãƒ‘ã‚¹ãŒç„¡åŠ¹</exception>
+        /// <exception cref="DirectoryNotFoundException">ãƒ•ã‚©ãƒ«ãƒ€ãŒå­˜åœ¨ã—ãªã„</exception>
+        /// <exception cref="IOException">ç§»å‹•å…ˆã«ã™ã§ã«ãƒ•ã‚©ãƒ«ãƒ€ãŒå­˜åœ¨ã™ã‚‹</exception>
         private string MoveBlenderToolsToRootCore(string blenderToolsDirPath, string vrcRootDirPath)
         {
             if (string.IsNullOrWhiteSpace(blenderToolsDirPath) || string.IsNullOrWhiteSpace(vrcRootDirPath))
             {
-                throw new ArgumentException("ƒpƒX‚ª–³Œø‚Å‚·B");
+                throw new ArgumentException("ãƒ‘ã‚¹ãŒç„¡åŠ¹ã§ã™ã€‚");
             }
 
             var sourceDir = new DirectoryInfo(blenderToolsDirPath);
             if (!sourceDir.Exists)
             {
-                throw new DirectoryNotFoundException("w’è‚³‚ê‚½BlenderToolsƒtƒHƒ‹ƒ_‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB");
+                throw new DirectoryNotFoundException("æŒ‡å®šã•ã‚ŒãŸBlenderToolsãƒ•ã‚©ãƒ«ãƒ€ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚");
             }
 
             var targetPath = Path.Combine(vrcRootDirPath, "BlenderTools");
@@ -231,7 +231,9 @@ namespace mochifitter_link_manager
 
             if (Directory.Exists(targetFull) || File.Exists(targetFull))
             {
-                throw new IOException("VRCRoot‚ÉŠù‚ÉBlenderTools‚ª‘¶İ‚µ‚Ü‚·B‘€ì‚ğ’†~‚µ‚Ü‚·B");
+                // ãƒ«ãƒ¼ãƒˆãƒ•ã‚©ãƒ«ãƒ€ã«æ—¢ã«ãƒ•ã‚©ãƒ«ãƒ€ãŒå­˜åœ¨ã™ã‚‹å ´åˆã€ç§»å‹•ã›ãšã«ãã®ãƒ‘ã‚¹ã‚’è¿”ã™
+                // ç§»å‹•å…ƒã®ãƒ•ã‚©ãƒ«ãƒ€ã¯å¾Œã®å‰Šé™¤å‡¦ç†ã§è‡ªå‹•å‰Šé™¤ã•ã‚Œã‚‹
+                return targetFull;
             }
 
             Directory.Move(sourceFull, targetFull);
@@ -240,10 +242,10 @@ namespace mochifitter_link_manager
         }
 
         /// <summary>
-        /// •s—v‚ÈBlenderToolsƒtƒHƒ‹ƒ_‚ğíœ
+        /// ä¸è¦ãªBlenderToolsãƒ•ã‚©ãƒ«ãƒ€ã‚’å‰Šé™¤
         /// </summary>
-        /// <param name="vrcRootDirPath">VRChatƒvƒƒWƒFƒNƒgŒQ‚Ìƒ‹[ƒgƒtƒHƒ‹ƒ_</param>
-        /// <exception cref="DirectoryNotFoundException">ƒ‹[ƒgƒtƒHƒ‹ƒ_‚ª‘¶İ‚µ‚È‚¢</exception>
+        /// <param name="vrcRootDirPath">VRChatãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆç¾¤ã®ãƒ«ãƒ¼ãƒˆãƒ•ã‚©ãƒ«ãƒ€</param>
+        /// <exception cref="DirectoryNotFoundException">ãƒ«ãƒ¼ãƒˆãƒ•ã‚©ãƒ«ãƒ€ãŒå­˜åœ¨ã—ãªã„</exception>
         private (int deletedCount, int failedCount) DeleteOthersBlenderToolsCore(string vrcRootDirPath, IProgress<(string message, int percent)> progress, int startPercent, int endPercent)
         {
             if (string.IsNullOrWhiteSpace(vrcRootDirPath))
@@ -254,7 +256,7 @@ namespace mochifitter_link_manager
             var rootDir = new DirectoryInfo(vrcRootDirPath);
             if (!rootDir.Exists)
             {
-                throw new DirectoryNotFoundException("w’è‚³‚ê‚½ƒ‹[ƒgƒtƒHƒ‹ƒ_‚ª‘¶İ‚µ‚Ü‚¹‚ñB");
+                throw new DirectoryNotFoundException("æŒ‡å®šã•ã‚ŒãŸãƒ«ãƒ¼ãƒˆãƒ•ã‚©ãƒ«ãƒ€ãŒå­˜åœ¨ã—ã¾ã›ã‚“ã€‚");
             }
 
             int deletedCount = 0;
@@ -268,7 +270,7 @@ namespace mochifitter_link_manager
                 var candidate = Path.Combine(child.FullName, "BlenderTools");
 
                 int percent = startPercent + (int)((i + 1) / (double)total * (endPercent - startPercent));
-                ReportProgress(progress, $"•s—v‚È 'BlenderTools' ‚ğíœ’†... ({i + 1}/{total})", percent);
+                ReportProgress(progress, $"ä¸è¦ãª 'BlenderTools' ã‚’å‰Šé™¤ä¸­... ({i + 1}/{total})", percent);
                 
                 bool needDelete = Directory.Exists(candidate) && !IsSymbolicLink(candidate);
                 if (!needDelete) { continue; }
@@ -289,10 +291,10 @@ namespace mochifitter_link_manager
         }
 
         /// <summary>
-        /// ƒfƒBƒŒƒNƒgƒŠ‚Æƒtƒ@ƒCƒ‹‚Ì‘®«‚ğÄ‹A“I‚É’Êí‚É–ß‚·
+        /// ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã¨ãƒ•ã‚¡ã‚¤ãƒ«ã®å±æ€§ã‚’å†å¸°çš„ã«é€šå¸¸ã«æˆ»ã™
         /// </summary>
         /// <remarks>
-        /// íœ‚É‘®«‚ª“Ç‚İæ‚èê—p‚¾‚Æ¸”s‚·‚éê‡‚ª‚ ‚é
+        /// å‰Šé™¤æ™‚ã«å±æ€§ãŒèª­ã¿å–ã‚Šå°‚ç”¨ã ã¨å¤±æ•—ã™ã‚‹å ´åˆãŒã‚ã‚‹
         /// </remarks>
         /// <param name="dir"></param>
         private void ClearReadOnlyAttributes(DirectoryInfo dir)
@@ -313,16 +315,16 @@ namespace mochifitter_link_manager
             }
             catch
             {
-                // ‘®«•ÏX‚É¸”s‚µ‚Ä‚àíœˆ—‚É”C‚¹‚éiãˆÊ‚Å•ß‘¨‚³‚ê‚éj
+                // å±æ€§å¤‰æ›´ã«å¤±æ•—ã—ã¦ã‚‚å‰Šé™¤å‡¦ç†ã«ä»»ã›ã‚‹ï¼ˆä¸Šä½ã§æ•æ‰ã•ã‚Œã‚‹ï¼‰
             }
         }
 
         /// <summary>
-        /// ƒVƒ“ƒ{ƒŠƒbƒNƒŠƒ“ƒN‚ğì¬
+        /// ã‚·ãƒ³ãƒœãƒªãƒƒã‚¯ãƒªãƒ³ã‚¯ã‚’ä½œæˆ
         /// </summary>
-        /// <param name="vrcRootDirPath">VRChatƒvƒƒWƒFƒNƒgŒQ‚Ìƒ‹[ƒgƒtƒHƒ‹ƒ_</param>
-        /// <param name="blenderToolsDirPath">BlenderTools‚ÌÀ‘ÌƒtƒHƒ‹ƒ_ƒpƒX</param>
-        /// <exception cref="DirectoryNotFoundException">ƒ‹[ƒgƒtƒHƒ‹ƒ_‚ª‘¶İ‚µ‚È‚¢</exception>
+        /// <param name="vrcRootDirPath">VRChatãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆç¾¤ã®ãƒ«ãƒ¼ãƒˆãƒ•ã‚©ãƒ«ãƒ€</param>
+        /// <param name="blenderToolsDirPath">BlenderToolsã®å®Ÿä½“ãƒ•ã‚©ãƒ«ãƒ€ãƒ‘ã‚¹</param>
+        /// <exception cref="DirectoryNotFoundException">ãƒ«ãƒ¼ãƒˆãƒ•ã‚©ãƒ«ãƒ€ãŒå­˜åœ¨ã—ãªã„</exception>
         private int CreateSymbolicLinksCore(string vrcRootDirPath, string blenderToolsDirPath, IProgress<(string message, int percent)> progress, int startPercent, int endPercent)
         {
             if (string.IsNullOrWhiteSpace(vrcRootDirPath))
@@ -333,7 +335,7 @@ namespace mochifitter_link_manager
             var rootDir = new DirectoryInfo(vrcRootDirPath);
             if (!rootDir.Exists)
             {
-                throw new DirectoryNotFoundException("w’è‚³‚ê‚½ƒ‹[ƒgƒtƒHƒ‹ƒ_‚ª‘¶İ‚µ‚Ü‚¹‚ñB");
+                throw new DirectoryNotFoundException("æŒ‡å®šã•ã‚ŒãŸãƒ«ãƒ¼ãƒˆãƒ•ã‚©ãƒ«ãƒ€ãŒå­˜åœ¨ã—ã¾ã›ã‚“ã€‚");
             }
 
             var children = rootDir.GetDirectories();
@@ -354,17 +356,17 @@ namespace mochifitter_link_manager
                 }
 
                 int percent = startPercent + (int)((i + 1) / (double)total * (endPercent - startPercent));
-                ReportProgress(progress, $"ƒVƒ“ƒ{ƒŠƒbƒNƒŠƒ“ƒNì¬’†... ({i + 1}/{total})", percent);
+                ReportProgress(progress, $"ã‚·ãƒ³ãƒœãƒªãƒƒã‚¯ãƒªãƒ³ã‚¯ä½œæˆä¸­... ({i + 1}/{total})", percent);
             }
 
             return created;
         }
 
         /// <summary>
-        /// ƒVƒ“ƒ{ƒŠƒbƒNƒŠƒ“ƒN‚ğì¬
+        /// ã‚·ãƒ³ãƒœãƒªãƒƒã‚¯ãƒªãƒ³ã‚¯ã‚’ä½œæˆ
         /// </summary>
-        /// <param name="linkPath">ƒŠƒ“ƒN</param>
-        /// <param name="targetPath">À‘Ì</param>
+        /// <param name="linkPath">ãƒªãƒ³ã‚¯</param>
+        /// <param name="targetPath">å®Ÿä½“</param>
         /// <exception cref="InvalidOperationException"></exception>
         private void CreateSymbolicLink(string linkPath, string targetPath)
         {
@@ -374,8 +376,8 @@ namespace mochifitter_link_manager
             }
             catch (Exception ex)
             {
-                // Šù‘¶‚ÌƒGƒ‰[ƒnƒ“ƒhƒŠƒ“ƒO‚Æ“¯—l‚Éƒ‰ƒbƒv‚µ‚ÄãˆÊ‚É“`”À
-                throw new InvalidOperationException("ƒVƒ“ƒ{ƒŠƒbƒNƒŠƒ“ƒN‚Ìì¬‚É¸”s‚µ‚Ü‚µ‚½: " + ex.Message, ex);
+                // æ—¢å­˜ã®ã‚¨ãƒ©ãƒ¼ãƒãƒ³ãƒ‰ãƒªãƒ³ã‚°ã¨åŒæ§˜ã«ãƒ©ãƒƒãƒ—ã—ã¦ä¸Šä½ã«ä¼æ¬
+                throw new InvalidOperationException("ã‚·ãƒ³ãƒœãƒªãƒƒã‚¯ãƒªãƒ³ã‚¯ã®ä½œæˆã«å¤±æ•—ã—ã¾ã—ãŸ: " + ex.Message, ex);
             }
         }
     }
