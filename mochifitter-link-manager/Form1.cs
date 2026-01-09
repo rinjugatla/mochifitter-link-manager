@@ -205,7 +205,7 @@ namespace mochifitter_link_manager
         private void ProcessingTimer_Tick(object? sender, EventArgs e)
         {
             var elapsed = DateTime.Now - processingStartTime;
-            ProcessingTime_Label.Text = $"処理時間: {elapsed.TotalSeconds:F0}秒";
+            ProcessingTime_Label.Text = $"処理時間: {elapsed.TotalSeconds:F1}秒";
         }
 
         /// <summary>
