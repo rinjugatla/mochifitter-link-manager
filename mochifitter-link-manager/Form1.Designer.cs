@@ -74,7 +74,7 @@
             CreateLink_Button.Name = "CreateLink_Button";
             CreateLink_Button.Size = new Size(708, 51);
             CreateLink_Button.TabIndex = 2;
-            CreateLink_Button.Text = "BlenderToolsをおまとめ";
+            CreateLink_Button.Text = "BlenderToolsをまとめる";
             CreateLink_Button.UseVisualStyleBackColor = true;
             CreateLink_Button.Click += CreateLink_Button_Click;
             // 
@@ -117,7 +117,7 @@
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             Name = "Form1";
-            Text = "もちふぃった～ BlenderTools まとめツール";
+            Text = "もちふぃった～のBlenderToolsをまとめて軽くするやつ";
             ResumeLayout(false);
             PerformLayout();
         }

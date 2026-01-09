@@ -61,7 +61,7 @@ dotnet run --project "mochifitter-link-manager\mochifitter-link-manager.csproj"
 2. 「BlenderToolsフォルダパス」横の「参照」ボタンで、対象の `BlenderTools` フォルダを選択します
 	 - フォルダ名が厳密に `BlenderTools` である必要があります
 	 - シンボリックリンクの `BlenderTools` は選択不可（通常フォルダのみ許可）
-3. 「BlenderToolsをおまとめ」ボタンをクリックします
+3. 「BlenderToolsをまとめる」ボタンをクリックします
 4. 進捗ダイアログの表示後、完了サマリ（削除件数／失敗件数／作成リンク数）を確認します
 
 ### 典型的なフォルダ構成（例）
