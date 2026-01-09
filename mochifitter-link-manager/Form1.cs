@@ -17,8 +17,54 @@ namespace mochifitter_link_manager
         public Form1()
         {
             InitializeComponent();
+            // Load saved path from settings
+            LoadSavedBlenderToolsPath();
             // Validate initial state and update when the text changes
             UpdateCreateLinkButtonState();
+        }
+
+        /// <summary>
+        /// 保存されたBlenderToolsフォルダパスを読み込み
+        /// </summary>
+        private void LoadSavedBlenderToolsPath()
+        {
+            try
+            {
+                var savedPath = Properties.Settings.Default.BlenderToolsDirectoryPath;
+                if (!string.IsNullOrWhiteSpace(savedPath))
+                {
+                    BlenderToolsDirectory_TextBox.Text = savedPath;
+                }
+            }
+            catch (System.Configuration.ConfigurationErrorsException)
+            {
+                // 設定ファイルが破損している場合は無視（空欄のまま）
+            }
+            catch (Exception)
+            {
+                // その他の設定の読み込みエラーは無視（空欄のまま）
+            }
+        }
+
+        /// <summary>
+        /// フォーム終了時にBlenderToolsフォルダパスを保存
+        /// </summary>
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            try
+            {
+                Properties.Settings.Default.BlenderToolsDirectoryPath = BlenderToolsDirectory_TextBox.Text;
+                Properties.Settings.Default.Save();
+            }
+            catch (System.Configuration.ConfigurationErrorsException)
+            {
+                // 設定ファイルへの保存に失敗しても終了を妨げない
+            }
+            catch (Exception)
+            {
+                // その他の設定の保存エラーでも終了を妨げない
+            }
+            base.OnFormClosing(e);
         }
 
         /// <summary>
@@ -142,6 +188,7 @@ namespace mochifitter_link_manager
                 int deletedCount = 0;
                 int failedDeleteCount = 0;
                 int linkCreatedCount = 0;
+                string movedBlenderToolsDirPath = string.Empty;
 
                 var progress = new Progress<(string message, int percent)>(update =>
                 {
@@ -154,7 +201,7 @@ namespace mochifitter_link_manager
                     {
                         // 0-10% Move
                         ReportProgress(progress, "BlenderTools を VRCRoot へ移動しています...", 5);
-                        string movedBlenderToolsDirPath = place == BlenderToolsPlace.InAvaterDirectory ?
+                        movedBlenderToolsDirPath = place == BlenderToolsPlace.InAvaterDirectory ?
                             MoveBlenderToolsToRootCore(blenderToolsPath, rootPath) :
                             blenderToolsPath;
                         ReportProgress(progress, "移動完了", 10);
@@ -166,6 +213,12 @@ namespace mochifitter_link_manager
                         linkCreatedCount = CreateSymbolicLinksCore(rootPath, movedBlenderToolsDirPath, progress, 70, 100);
                         ReportProgress(progress, "リンク作成完了", 100);
                     });
+
+                    // 処理成功後、ルートフォルダのBlenderToolsパスをテキストボックスに自動入力
+                    if (!string.IsNullOrWhiteSpace(movedBlenderToolsDirPath))
+                    {
+                        BlenderToolsDirectory_TextBox.Text = movedBlenderToolsDirPath;
+                    }
 
                     string summary = $"削除成功: {deletedCount} 件\n失敗: {failedDeleteCount} 件\n作成したリンク: {linkCreatedCount} 件";
                     MessageBox.Show(this, summary, "処理完了", MessageBoxButtons.OK, MessageBoxIcon.Information);
